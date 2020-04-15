@@ -5,6 +5,7 @@ const router = express.Router();
 
 //users handlers
 router.post('/signup', authController.signUp)
+router.get('/login',authController.login);
 
 router
   .route("/")

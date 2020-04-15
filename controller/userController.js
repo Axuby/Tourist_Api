@@ -25,7 +25,7 @@ exports.createUser = catchAsync(async(req, res, next) => {
                 error: error
             });
         });
-};
+})
 
 exports.getOneThing = (req, res, next) => {
     Thing.findOne({

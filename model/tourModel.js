@@ -10,15 +10,15 @@ const tourSchema = new mongoose.Schema({
   },
   difficulty:{
       type:String,
-      require:[true,'Please input the Difficulty']
+     // require:[true,'Please input the Difficulty']
   },
   MaxGroupSize:{
       type:Number,
-      required:[true,'please your group size']
+     // required:[true,'please your group size']
   },
   Duration:{
       type:Number,
-      required:[true,'Please specify the duration']
+      //required:[true,'Please specify the duration']
   },
   price: {
     type: Number,

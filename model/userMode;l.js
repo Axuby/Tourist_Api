@@ -3,7 +3,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 const Schema = mongoose.Schema;
 const validator = require("validator");
 const bcrypt  = require('bcrypt');
- const URL = "mongodb://127.0.0.1:27017/Test";
+ const URL = "mongodb://127.0.0.1:27017/natours-test";
 
 mongoose.connect(URL);
 
@@ -12,11 +12,11 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  Username: {
-    type: String,
-    required: true,
+  // Username: {
+  //   type: String,
+  //   required: true,
    
-  },
+  // },
   email: {
     type: String,
     required: true,
