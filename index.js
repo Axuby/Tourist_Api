@@ -1,14 +1,22 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-//const user = require("./model/userMode;l");
+const user = require("./model/userMode;l");
 const URL = "mongodb://127.0.0.1:27017/natours-test";
-//
+
+//uncaught exceptions  errors in our code that we didnt care to write
+// our node app is in a cleaning state
+process.on('uncaughtException',err => {
+  console.log('ERROR',err.name,err.message)
+  console.log('UNCAUGHT EXCEPTION! shutting down ....')
+  process.exit(1)
+})
+
 const dotenv = require("dotenv");
+const app = require('./app')
  
 dotenv.config({ path: "./config.env" });
 mongoose
-  .connect(URL, {
+  .connect('ssss', {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -17,9 +25,9 @@ mongoose
   .then(() => {
     console.log("Successfully connected to DB");
   })
-  .catch(err => {
-    console.log(err);
-  });
+  // .catch(err => {
+  //   console.log(err);
+  // });
   //console.log(process.env)
 
 const port = process.env.PORT || 4100;
@@ -54,10 +62,17 @@ const port = process.env.PORT || 4100;
 // //Handling PATCH requests Update
 // app.patch("/api/v1/tours/:id",updateData);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server listening on ${port}`);
 });
 
-
+//Unhandled rejections
+process.on('unhandledRejection',err =>{
+  console.log('ERR',err.name,err.message)
+  console.log('UNHANDLED REJECTION! shutting down ....')
+server.close(()=>{
+  process.exit(1 )
+})
+})
 
 

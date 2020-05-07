@@ -3,7 +3,7 @@ const Tour = require('../model/tourModel')
 const catchAsync = require('../utils/catchAsync');
 const multer = require('multer')
 
-const multerStorag = multer.diskStorage()
+//const multerStorag = multer.diskStorage()
 
 exports.createUser = catchAsync(async(req, res, next) => {
     const th= new Thing({
