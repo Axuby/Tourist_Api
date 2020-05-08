@@ -43,9 +43,9 @@ const handleValidationErrorDB = err => {
     });
   }
 
+  const handleJwtError = () => new AppError('Invalid token! Please login again',401 )
 
-
-
+  const handleExpiredTokenError = () => new AppError('Token expired ! Please login again',401)
 
 module.exports = (err,req, res, next) => {
 
@@ -69,7 +69,9 @@ sendErrorDev(err,res)
          //from postman
          if (error.code === 11000)    error = handleDuplicateFieldsDB(error) 
          if (error.name === 'ValidationError')   error = handleValidationErrorDB(error)
-
+         // Handle jwt error
+         if (error.name === 'jsonWebTokenError') error = handleJwtError()
+if (error.name === 'TokenExpiredError') error = handleExpiredTokenError()
  sendErrorProd(err,res)
  }
   next(
