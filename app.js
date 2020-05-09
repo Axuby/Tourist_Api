@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const bodyParser = require('body-parser')
 const route = require("./routes/userRoutes");
 const router = require("./routes/tourRoutes");
-const AppError = require('./utils/appError')
+//const AppError = require('./utils/appError')
 const globalErrorHandler = require('./controller/errorController')
 
 app.use(express.json());
@@ -29,10 +29,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  console.log("Hello from the middleware");
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log("Hello from the middleware");
+//   next();
+// });
 app.use((req, res, next) => { 
   req.requestTime = new Date().toISOString();
   console.log(req.requestTime);

@@ -6,11 +6,12 @@ const {promisify} = require('util')
 
 
 const signToken = id => {
+    console.log(process.env.JWT_EXPIRES_IN)
     return jwt.sign({
-        id:newUser._id},
+        id },
         process.env.JWT_SECRET,
         {
-        expiresIn:process.env.JWT_SECRET_IN
+        expiresIn:process.env.JWT_EXPIRES_IN
     })
 }
 
@@ -26,7 +27,7 @@ exports.signUp = catchAsync( async (req,res,next)=>{
 
     const token =  signToken(newUser._id)
     res.status(201).json({
-      status:'succes',
+      status:'success',
         data:{
       user: newUser,
       token
@@ -87,14 +88,33 @@ console.log(token)
 if (thisUserStillExist.changedPasswordAfter(decodedToken.iat)) {
     return next(new AppError('User recently changed password! Please log in again.',401))
 }
-req.user = thisUserStillExist;//Assign this user so it can be used in the next middleware
+req.user = thisUserStillExist;//Assign this user to the req.user so it can be used in the next middleware
 console.log(req.user)
 console.log(thisUserStillExist)
 next()
   })
 
   //401 - unauthorised
+  //403 - forbidden
   //500 - internal server error
   //400 - Bad request
   //201 - created 
-  //
+  //204 - no content ! deleted
+  exports.restrictAccess = (...roles) => {
+      return (res,req,next)=> {
+          //
+          if (!roles.includes(req.user.role,0)) {
+           return    next(new AppError('You do not have permission to perform this action!',403))
+          }
+
+          next()
+        }
+  }
+
+  exports.forgotPassword = () =>{
+
+  }
+
+  exports.resetPassword = () =>  {
+
+  }

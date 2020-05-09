@@ -10,7 +10,25 @@ const catchAsync = require('../utils/catchAsync')
 
 //const tours = JSON.parse(fs.readFileSync(`${__dirname}/./../devData/simple.json`))
   exports.getAllTours = catchAsync(async (req, res,next) => {
-    const tours = await Tour.find();//get all tours in the DB
+
+const queryObj = {...req.query};
+const excludeFields = ['page','limit','sort','fields']//exclude this from the query
+excludeFields.forEach(element => {
+  return delete queryObj[element]
+});
+
+
+let queryString = JSON.stringify(queryObj)
+queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+console.log(queryString)
+
+
+// const query =  Tour.find(queryObj)
+const query =  Tour.find(JSON.parse(queryString))
+console.log(query)
+const tours = await query
+
+   //const tours = await Tour.find(queryObj).where('duration').equals(5).where('difficulty').equals('easy');//get all tours document in the DB ,the
     if (!tours) {
       return next(new AppError('No tours with that ID was found',404))
     }

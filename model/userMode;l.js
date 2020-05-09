@@ -25,6 +25,13 @@ const UserSchema = new Schema({
    validate:[validator.isEmail,"Please provide a valid email"]
   },
   photo:String,
+
+  role:{
+type:String,
+enum: ['user','guide','lead-guide','admin'],
+default: 'user',
+  },
+
   password: {
     type: String,
     required:[ true,"Please input a password"],
@@ -40,7 +47,8 @@ const UserSchema = new Schema({
   return el === this.password
 }},
 message: 'Password are not the same'
-  }
+  },
+  changedPasswordAt : Date
 }); 
 
 //mongoose middleware PRE('save') encrypt password
@@ -56,10 +64,20 @@ UserSchema.pre('save', async function(next) {
 
 
 //instance method, available on all documents in this collection
-UserSchema.method.correctPassword =  function(keyedPassword,userPassword){
+UserSchema.methods.correctPassword =  function(keyedPassword,userPassword){
   return bcrypt.compare(keyedPassword,userPassword)//compares the hashed password with the keyed in function
 }
 
-UserSchema.plugin(uniqueValidator);
+UserSchema.methods.changedPasswordAfter = function(JWTTimestamp){
+if (this.changedPasswordAt) {
+  console.log(this.changedPasswordAt,JWTTimestamp)
+//convert to date
+  const changedTimeStamp = parseInt(this.changedPasswordAt.getTime()/1000,10) 
+
+  return JWTTimestamp < changedTimeStamp;
+}
+return false ///By default will/should return false 
+}
+//UserSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", UserSchema);

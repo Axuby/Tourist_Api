@@ -7,10 +7,13 @@ const router = express.Router();
 router.post('/signup', authController.signUp)
 router.get('/login',authController.login);
 
+router.post('/forgot-password', authController.forgotPassword)
+router.post('/reset-password', authController.resetPassword)
+
 router
   .route("/")
   .get(authController.protect,userController.getAllStuff)
-  .post(authController.protect,userController.createThing);
+  .post(authController.protect,()=> userController.createThing);
 router
   .route("/:id")
   .get(userController.getOneThing)
@@ -18,4 +21,4 @@ router
   .delete(userController.deleteThing);
 
 
-module.exports = route;
+module.exports = router;
