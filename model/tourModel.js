@@ -10,7 +10,9 @@ const tourSchema = new mongoose.Schema({
   slug:String,
   ratingsAverage:{
 type:Number,
-default:4.5
+default:4.5,
+min:[1, 'Rating must be above 1.0'],
+max:[1, 'Rating must be below 5.0']
   },
   ratingsQuantity:{
 type:Number,
@@ -36,6 +38,7 @@ trim:true
       type:Number,
     required:[true,'A Tour must have a duration,Please specify the duration']
   },
+  secretTour:Boolean,
   price: {
     type: Number,
     required: true
@@ -76,6 +79,25 @@ tourSchema.pre('save',function(next){ //this is pointing to the currently saved 
   this.slug = slugify(this.name, {lower:true})
   next()
 })
+
+tourSchema.pre(/^find/,function(next){
+  this.find({secretTour:{ $ne:true}})
+  this.start = Date.now()
+  next()
+})
+
+tourSchema.post(/^find/,function(docs,next){
+  console.log(`QUery took ${Date.now()- this.start}  milliseconds}`)
+  next()
+})
+
+tourSchema.pre('aggregate',function(next){
+  this.pipeline().unshift({$match:{secretTour:{$ne:true}}})
+  console.log(this.pipeline())
+  next()
+})
+
+
 const Tour = mongoose.model('Tour',tourSchema)
 module.exports = Tour
 
