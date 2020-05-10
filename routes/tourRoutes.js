@@ -5,6 +5,9 @@ const router = express.Router();
 const authController = require('../controller/AuthController')
 //tours route handlers
 router.param('id',tourController.checkId)
+
+router.route('/top-5-tours')
+.get(()=> tourController.aliasTopTours,tourController.getAllTours)
 router
   .route("/")
   .get(authController.protect,tourController.getAllTours) //get all tours

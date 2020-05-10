@@ -1,4 +1,4 @@
-const Thing = require("../model/userMode;l");
+const User = require("../model/userMode;l");
 const Tour = require('../model/tourModel')
 const catchAsync = require('../utils/catchAsync');
 const multer = require('multer')
@@ -6,15 +6,8 @@ const multer = require('multer')
 //const multerStorag = multer.diskStorage()
 
 exports.createUser = catchAsync(async(req, res, next) => {
-    const th= new Thing({
-        title: req.body.title,
-        description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId
-    });
-    thing
-        .save()
+    const user = new User(req.body);
+    user.save()
         .then(() => {
             res.status(201).json({
                 message: "Post saved successfully!"
@@ -27,12 +20,12 @@ exports.createUser = catchAsync(async(req, res, next) => {
         });
 })
 
-exports.getOneThing = (req, res, next) => {
-    Thing.findOne({
+exports.getOneUser = (req, res, next) => {
+    User.findOne({
             _id: req.params.id
         })
-        .then(thing => {
-            res.status(200).json(thing);
+        .then(user => {
+            res.status(200).json(user);
         })
         .catch(error => {
             res.status(404).json({
@@ -41,16 +34,9 @@ exports.getOneThing = (req, res, next) => {
         });
 };
 
-exports.modifyThing = (req, res, next) => {
-    const thing = new Thing({
-        _id: req.params.id,
-        title: req.body.title,
-        description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId
-    });
-    Thing.updateOne({ _id: req.params.id }, thing)
+exports.modifyUser = (req, res, next) => {
+    const user = new User(req.body);
+    User.updateOne({ _id: req.params.id }, user)
         .then(() => {
             res.status(201).json({
                 message: "Thing updated successfully!"
@@ -63,8 +49,8 @@ exports.modifyThing = (req, res, next) => {
         });
 };
 
-exports.deleteThing = (req, res, next) => {
-    Thing.deleteOne({ _id: req.params.id })
+exports.deleteUser = (req, res, next) => {
+    User.deleteOne({ _id: req.params.id })
         .then(() => {
             res.status(200).json({
                 message: "Deleted!"
@@ -77,7 +63,7 @@ exports.deleteThing = (req, res, next) => {
         });
 };
 
-exports.getAllStuff = (req, res, next) => {
+exports.getAllUsers = (req, res, next) => {
     Thing.find()
         .then(things => {
             res.status(200).json(things);

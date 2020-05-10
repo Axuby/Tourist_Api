@@ -5,11 +5,11 @@ const URL = "mongodb://127.0.0.1:27017/natours-test";
 
 //uncaught exceptions  errors in our code that we didnt care to write
 // our node app is in a cleaning state
-process.on('uncaughtException',err => {
-  console.log('ERROR',err.name,err.message)
-  console.log('UNCAUGHT EXCEPTION! shutting down ....')
-  process.exit(1)
-})
+// process.on('uncaughtException',err => {
+//   console.log('ERROR',err.name,err.message)
+//   console.log('UNCAUGHT EXCEPTION! shutting down ....')
+//   process.exit(1)
+// })
 
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });

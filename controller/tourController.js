@@ -4,23 +4,48 @@ const Tour = require("../model/tourModel");
 const catchAsync = require('../utils/catchAsync')
 
 // const tour = new Tour();
+class APIFeatures {
+  constructor(query,queryStr){
+    this.query = query;
+    this.queryString = queryString
+  }
 
-// const 
-// );
-
-//const tours = JSON.parse(fs.readFileSync(`${__dirname}/./../devData/simple.json`))
-  exports.getAllTours = catchAsync(async (req, res,next) => {
-
-const queryObj = {...req.query};
+  filter(){
+const queryObj = {...this.queryStr}//{...req.query};
 const excludeFields = ['page','limit','sort','fields']//exclude this from the query
 excludeFields.forEach(element => {
   return delete queryObj[element]
 });
-//filtering
 
 let queryString = JSON.stringify(queryObj)
 queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
 console.log(queryString)
+
+this.query.find(JSON.parse(queryString))
+
+  }
+}
+// );
+exports.aliasTopTours = (req,res,next) =>{
+  req.query.limit = '5'
+  req.query.sort = '-ratingsAverage,price'
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next()
+}
+//const tours = JSON.parse(fs.readFileSync(`${__dirname}/./../devData/simple.json`))
+  exports.getAllTours = catchAsync(async (req, res,next) => {
+
+// const queryObj = {...req.query};
+// const excludeFields = ['page','limit','sort','fields']//exclude this from the query
+// excludeFields.forEach(element => {
+//   return delete queryObj[element]
+// });
+// //filtering
+
+// let queryString = JSON.stringify(queryObj)
+// queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+// console.log(queryString)
+const features = new APIFeatures(Tour.find(),req.query).filter()
 
 //sorting
 if (req.query.sort) {
@@ -54,6 +79,8 @@ if (req.query.page) {
     throw new Error('This page doesnt exist')
   }
 }
+
+
 
 // const query =  Tour.find(queryObj)
 const query =  Tour.find(JSON.parse(queryString))
@@ -103,14 +130,14 @@ exports.getTour = catchAsync(async (req, res,next) => {
 exports.createTour = catchAsync(async (req, res,next) => {
   // const newTour = new Tour({})
   // newTour.save().find()
-  const {name,difficulty,rating,MaxGroupSize,Duration,price} = req.body
+  const {name,difficulty,rating,MaxGroupSize,Duration,price,createdAt,imageCover,images} = req.body
   const newTour = await Tour.create({
     name,
     difficulty,
     rating,
     MaxGroupSize,
     Duration,
-    price});
+    price,createdAt,imageCover,images});
   // const newId = tours[tours.length - 1].id + 1;
   // const newTours = Object.assign({ id: newId }, req.body);
   // tours.push(newTours);
