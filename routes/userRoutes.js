@@ -12,13 +12,13 @@ router.post('/reset-password', authController.resetPassword)
 
 router
   .route("/")
-  .get(authController.protect,userController.getAllStuff)
-  .post(authController.protect,()=> userController.createThing);
+  .get(authController.protect,() => userController.getAllUsers)
+  .post(authController.protect,()=> userController.createUser);
 router
   .route("/:id")
-  .get(userController.getOneThing)
-  .patch(userController.modifyThing)
-  .delete(userController.deleteThing);
+  .get(userController.getOneUser)
+  .patch(userController.modifyUser)
+  .delete(userController.deleteUser);
 
 
 module.exports = router;

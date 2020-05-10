@@ -20,7 +20,7 @@ const handleValidationErrorDB = err => {
 
 
   const sendErrorProd = (err,res) =>{
-    //operatinal error
+    //operational error
     if (err.isOperation) {
       res.status(err.statusCode).json({
         status:err.status,
