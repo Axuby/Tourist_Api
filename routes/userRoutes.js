@@ -9,7 +9,10 @@ router.post('/login',authController.login);
 
 
 router.post('/forgot-password', authController.forgotPassword)
-router.patch('/reset-password', authController.resetPassword)
+router.patch('/reset-password/:token', authController.resetPassword)
+router.patch('/reset-my-password',authController.protect,authController.updateLoggedInUserPassword)
+router.patch('/update-myself',authController.protect,userController.updateMyself)
+router.delete('/delete-myself',authController.protect,userController.deleteMyself)
 
 router
   .route("/")

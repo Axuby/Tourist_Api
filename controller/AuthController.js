@@ -67,7 +67,7 @@ res.status(200).json({
 
 
 
-  exports.protect = catchAsync(async(req,res,next) =>{
+exports.protect = catchAsync(async(req,res,next) =>{
       let token;
 //check for token
       if (req.headers.authorization && req.headers.authorization.startWith('Bearer')) {
@@ -86,7 +86,7 @@ console.log(token)
         return next(new AppError('The user with this token no longer exist ',401))
     }
 
-    //check if user changed password after the token was isssued
+    //check if user changed password after the token was issued
 if (thisUserStillExist.changedPasswordAfter(decodedToken.iat)) {
     return next(new AppError('User recently changed password! Please log in again.',401))
 }
@@ -113,7 +113,7 @@ next()
         }
   }
 
-  exports.forgotPassword = async (req,res,next) =>{
+exports.forgotPassword = async (req,res,next) =>{
 const  user = await User.findOne({email: req.body.email})
 if (!user) {
     return next(new AppError('There is no user with this email address',404))
@@ -152,7 +152,7 @@ try {
     next();
   }
 
-  exports.resetPassword = (req,res,next) =>  {//provides a simple random jwt token and sends it to the email address that was provided
+exports.resetPassword = async(req,res,next) =>  {//provides a simple random jwt token and sends it to the email address that was provided
 //then user now sends the token with the new password to update the DB
 
 const hashedPassword = crypto.createHash('sha256').update(req.params.token).digest('hex')
@@ -178,5 +178,20 @@ res.status(200).json({
     token
 })
 //update changedPasswordAt property for the user
-next( )
+next()
 } 
+exports.updateLoggedInUserPassword = async(req,res,next) =>{
+const user = await User.findById({id : req.user.id}).select('+password')
+if (!(await user.correctPassword(req.body.password,user.password))) {
+    return next(new AppError('Incorrect password! Please input the correct password',401))
+}
+
+
+user.password = req.body.password;
+user.confirmPassword = req.body.confirmPassword;
+
+await user.save({validateBeforeSave:true})
+
+
+    next()
+}

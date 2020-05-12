@@ -51,7 +51,12 @@ message: 'Password are not the same'
   },
   changedPasswordAt : Date,
   passwordResetToken : String,
-  passwordResetExpiresAfter : Date
+  passwordResetExpiresAfter : Date,
+  active:{
+    type:Boolean,
+    default:true,
+    select:false
+  }
 }); 
 
 //mongoose middleware PRE('save') encrypt password
@@ -64,8 +69,15 @@ UserSchema.pre('save', async function(next) {
   this.confirmPassword = undefined;//deactivate confirm password
   next()
 })
-
-
+UserSchema.pre('save', function (next) {
+  if (!this.isModified('password')|| this.isNew) {
+    return next()
+  }
+this.changedPasswordAt = Date.now()
+})
+UserSchema.pre(/^find/,function(next) {
+  this.find({active:true})
+})
 //instance method, available on all documents in this collection
 UserSchema.methods.correctPassword =  function(keyedPassword,userPassword){
   return bcrypt.compare(keyedPassword,userPassword)//compares the hashed password with the keyed in function
