@@ -52,3 +52,54 @@ if (process.argv[2]=== '--import') {
 } else if(process.argv[2] === '--delete'){
     deleteData()
 }
+
+
+// const queryObj = {...req.query};
+// const excludeFields = ['page','limit','sort','fields']//exclude this from the query
+// excludeFields.forEach(element => {
+//   return delete queryObj[element]
+// });
+// //filtering
+
+// let queryString = JSON.stringify(queryObj)
+// queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`)
+// console.log(queryString)
+//sorting
+// if (req.query.sort) {
+//   const sortBy = req.query.sort.split(',').join('')//to sort by 2 or more parameters
+// query = query.sort(sortBy)
+// }else{
+//   query = query.sort('-createdAt') // if not specified sortby createdAt
+
+
+// //limit the fields
+// if (req.query.fields) {
+//   const fields = req.query.fields.split(',').join(' ')//mProjecting = process of selecting fieldnames by mongoose requests for string with field names separated by spaces 
+// query = query.select(fields) //eg select('name duration price)
+
+// } else {
+//   query = query.select('-__v') //default incase  doesn't specify fields,exclude this field
+// }
+
+
+
+//pagination
+// const page = req.query.page * 1|| 1;
+// const limit = req.query.limit* 1 ||  100;
+// const skip = (page - 1) * limit
+// query =  query.skip(skip).limit(limit)
+
+// if (req.query.page) {
+//   const numOfTours = await Tour.countDocuments()
+
+//   if (skip >= numOfTours) {
+//     throw new Error('This page doesnt exist')
+//   }
+// }
+
+
+
+// const query =  Tour.find(queryObj)
+//const query =  Tour.find(JSON.parse(queryString))
+// console.log(query)
+// const tours = await query

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 const bcrypt  = require('bcrypt');
  const URL = "mongodb://127.0.0.1:27017/natours-test";
+ const crypto = require('crypto')
 
 mongoose.connect(URL);
 
@@ -48,7 +49,9 @@ default: 'user',
 }},
 message: 'Password are not the same'
   },
-  changedPasswordAt : Date
+  changedPasswordAt : Date,
+  passwordResetToken : String,
+  passwordResetExpiresAfter : Date
 }); 
 
 //mongoose middleware PRE('save') encrypt password
@@ -77,6 +80,20 @@ if (this.changedPasswordAt) {
   return JWTTimestamp < changedTimeStamp;
 }
 return false ///By default will/should return false 
+}
+
+UserSchema.createUserResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+  //then save to DB and compare with token input from the user
+  
+  this.passwordResetExpiresAfter = Date.now() + 10 *60*1000;
+console.log({resetToken},this.passwordResetExpiresAfter)
+
+
+  return resetToken;
+
 }
 //UserSchema.plugin(uniqueValidator);
 

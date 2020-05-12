@@ -24,7 +24,11 @@ default:0
   },
   difficulty:{
       type:String,
-     require:[true,'Please input the Difficulty']
+     require:[true,'Please input the Difficulty'],
+     enum:{
+       values: ['easy','medium','difficult'],
+      message:'Difficulty can only be difficult, medium and easy'
+      }
   },
   description:{
 type:String,
@@ -41,9 +45,19 @@ trim:true
   secretTour:Boolean,
   price: {
     type: Number,
-    required: true
+    required: true,
+
   },
-  priceDiscount: Number,
+  priceDiscount:{
+type:Number,
+validate:{
+  validator:function(val){
+    return val > this.price//this points to the current new doc
+  },
+  message:'Discount should be below regular price'
+}
+
+  } ,
   imageCover:{//just the name of the image and read from the fileSystem and a reference stored in the DB
 type:String,//image is stored i the fs and a ref is stored in the DB
 required:[true, 'A tour must have a cover image']
@@ -55,7 +69,7 @@ createdAt:{
   default:Date.now(),
   select:false
 },
-startDates:[Dates],
+startDates:[Date],
 summary:{
   type:String,
   trim:true,

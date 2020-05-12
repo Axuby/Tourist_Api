@@ -9,7 +9,7 @@ const router = require("./routes/tourRoutes");
 const globalErrorHandler = require('./controller/errorController')
 
 app.use(express.json());
-app.use(express.static(`${__dirname}/public`));
+//app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 // });
 app.use((req, res, next) => { 
   req.requestTime = new Date().toISOString();
-  console.log(req.requestTime);
+  console.log('Requested At:',req.requestTime);
   next();
 });
 app.use(route)
