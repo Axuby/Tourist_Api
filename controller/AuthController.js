@@ -7,6 +7,21 @@ const {promisify} = require('util')
 const crypto = require('crypto')
 
 
+const createSendToken= (user,statusCode,res) =>{
+    const token = signToken(user._id)
+
+res.cookies('jwt',token,{
+    expires:new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_AFTER *24 * 60* 60*1000 ), //convert to ms
+    secure:true
+})
+
+res.status(200).json({
+    token,
+   data:{ user}
+})
+}
+
+
 const signToken = id => {
     console.log(process.env.JWT_EXPIRES_IN)
     return jwt.sign({
@@ -26,15 +41,15 @@ exports.signUp = catchAsync( async (req,res,next)=>{
         password: req.body.password,
         confirmPassword: req.body.confirmPassword
     })
-
-    const token =  signToken(newUser._id)
-    res.status(201).json({
-      status:'success',
-        data:{
-      user: newUser,
-      token
-     }
-    })
+createSendToken(newUser,201,res)
+    // const token =  signToken(newUser._id)
+    // res.status(201).json({
+    //   status:'success',
+    //     data:{
+    //   user: newUser,
+    //   token
+    //  }
+    // })
          
 })
 
@@ -57,11 +72,11 @@ exports.signUp = catchAsync( async (req,res,next)=>{
     if (!user || !correct) {
         return next(new AppError('Incorrect email or password',401))
     }
-const token = signToken(user._id)
-res.status(200).json({
-    user,
-    token
-})
+// const token = signToken(user._id)
+// res.status(200).json({
+//     user,
+//     token
+// })
 
   });
 
@@ -96,12 +111,7 @@ console.log(thisUserStillExist)
 next()
   })
 
-  //401 - unauthorised
-  //403 - forbidden
-  //500 - internal server error
-  //400 - Bad request
-  //201 - created 
-  //204 - no content ! deleted
+
   exports.restrictAccess = (...roles) => {
       return (res,req,next)=> {
           //
@@ -112,6 +122,8 @@ next()
           next()
         }
   }
+
+
 
 exports.forgotPassword = async (req,res,next) =>{
 const  user = await User.findOne({email: req.body.email})
@@ -172,17 +184,18 @@ user.passwordResetExpiresAfter = undefined
 
 await user.save()
 // login user and send JWT
-const token = signToken(user._id)
-res.status(200).json({
-    user,
-    token
-})
+createSendToken(user,200,res)
+// const token = signToken(user._id)
+// res.status(200).json({
+//     user,
+//     token
+// })
 //update changedPasswordAt property for the user
 next()
 } 
 exports.updateLoggedInUserPassword = async(req,res,next) =>{
 const user = await User.findById({id : req.user.id}).select('+password')
-if (!(await user.correctPassword(req.body.password,user.password))) {
+if (!(await user.correctPassword(req.body.newPassword,user.password))) {
     return next(new AppError('Incorrect password! Please input the correct password',401))
 }
 
@@ -190,8 +203,21 @@ if (!(await user.correctPassword(req.body.password,user.password))) {
 user.password = req.body.password;
 user.confirmPassword = req.body.confirmPassword;
 
-await user.save({validateBeforeSave:true})
-
+await user.save({validateBeforeSave:true});
+createSendToken(use,200,res);
+// const token = signToken(user._id)
+// res.status(200).json({
+//     user,
+//     token
+// })
 
     next()
 }
+
+
+  //401 - unauthorised
+  //403 - forbidden
+  //500 - internal server error
+  //400 - Bad request
+  //201 - created 
+  //204 - no content ! deleted

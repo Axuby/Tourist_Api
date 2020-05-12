@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const  rateLimit = require('express-rate-limit')
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser')
 const morgan = require("morgan");
 const bodyParser = require('body-parser')
@@ -18,6 +20,13 @@ if ((process.env.NODE_ENV = "development")) {
   app.use(morgan("dev"));
 }
 
+const limiter = rateLimit({
+  max:100,//100 requests from 1 IP
+  windowMs:60*60*1000,
+  message:'Too many requests from this IP,please try again in  hour'
+})
+app.use('/api',limiter)
+app.use(helmet())
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
