@@ -21,7 +21,7 @@ router
 router
   .route("/:id")
   .get(userController.getOneUser)
-  .patch(userController.modifyUser)
+  .patch(authController.protect,authController.restrictAccess('admin'),userController.updateUser)
   .delete(userController.deleteUser);
 
 

@@ -1,7 +1,7 @@
 const User = require("../model/userMode;l");
-const Tour = require('../model/tourModel')
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError')
+const factory = require('../controller/handleFactory')
 const multer = require('multer')
 
 //const multerStorag = multer.diskStorage()
@@ -13,12 +13,13 @@ const filterObj = (obj,...allowedFields)=>{
      return newObj;
 }
 
-exports.updateMe = catchAsync(async(req,res,next)=>{
+exports.updateMyself = catchAsync(async(req,res,next)=>{
 if (req.body.password || req.body.confirmPassword) {
     return next(new AppError('This route is not for password update!',400))
 }
-
+//filtered out unwanted updates
 const filteredBody = filterObj(req.body,'name','email')
+
 const updatedUser = await User.findByIdAndUpdate(req.user.id,filteredBody, {
     new:true,
     runValidators:true
@@ -30,8 +31,20 @@ res.status(200).json({
     },
     message: "Post saved successfully!"
 });
-
+next()
 })
+
+
+exports.deleteMyself = catchAsync(async (req,res,next)=>{
+await User.findByIdAndUpdate(req.user.id,{active:false})
+res.status(204).json({
+    status:'success',
+    data:null
+})
+
+    next()
+})
+
 
 
 exports.createUser = catchAsync(async(req, res, next) => {
@@ -50,51 +63,6 @@ exports.createUser = catchAsync(async(req, res, next) => {
         next()
 })
 
-exports.getOneUser = (req, res, next) => {
-    User.findOne({
-            _id: req.params.id
-        })
-        .then(user => {
-            res.status(200).json(user);
-        })
-        .catch(error => {
-            res.status(404).json({
-                error: error
-            });
-        });
-        next
-};
-
-exports.modifyUser = (req, res, next) => {
-    const user = new User(req.body);
-    User.updateOne({ _id: req.params.id }, user)
-        .then(() => {
-            res.status(201).json({
-                message: "Thing updated successfully!"
-            });
-        })
-        .catch(error => {
-            res.status(400).json({
-                error: error
-            });
-        });
-        next()
-};
-
-exports.deleteUser = (req, res, next) => {
-    User.deleteOne({ _id: req.params.id })
-        .then(() => {
-            res.status(200).json({
-                message: "Deleted!"
-            });
-        })
-        .catch(error => {
-            res.status(400).json({
-                error: error
-            });
-        });
-        next()
-};
 
 exports.getAllUsers = catchAsync( async(req, res, next) => {
     User.find()
@@ -108,3 +76,8 @@ exports.getAllUsers = catchAsync( async(req, res, next) => {
         });
         next()
 });
+
+exports.getAllUsers = factory.getAll(User)
+exports.getOneUser = factory.getOne(User)
+exports.updateUser =  factory.updateOne(User)//admins only
+exports.deleteUser = factory.deleteOne(User)
