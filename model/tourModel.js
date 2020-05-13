@@ -91,26 +91,35 @@ startLocation:{//GeoJSON
 // guides:Array,
 guides:[
   {
-    type:mongoose.Schema.ObjectId
+    type:mongoose.Schema.ObjectId,
+    ref:'User'
   }
 ],
+// reviews:[{
+//   type:mongoose.Schema.ObjectId,virtual
+//   ref:'Review'
+// }],
 summary:{
   type:String,
   trim:true,
   required:[true,'A tour must have a summary ']
   //not on the website 
 },
-
 },{
   toJSON:{ virtuals:true},
   toObject:{virtuals:true}
 });
 //Virtual properties - can be derived  from one another thus not necessary to store in Db
 
+tourSchema.virtual('reviews',{ //populate the review only on getOneTour request and not getAllTour
+    ref:'Review',                //thus done only on the getOneTour controller
+  foreignField:'tour',
+  localField:'_id'  //the place where virtual populate model is called the review Model
+})
+
 tourSchema.virtual('durationWeeks').get(function(){
   return this.Duration/7
 });
-
 //b4 .save() and .create() but not insertMany()
 tourSchema.pre('save',function(next){ //this is pointing to the currently saved Doc
   this.slug = slugify(this.name, {lower:true})
@@ -127,6 +136,12 @@ tourSchema.pre(/^find/,function(next){
   next()
 })
 
+tourSchema.pre(/^find/,function (next) {
+  this.populate({path:'guides',
+  select:'-_v -passwordChangedAt'
+  });
+  next()
+})
 tourSchema.post(/^find/,function(docs,next){
   console.log(`QUery took ${Date.now()- this.start}  milliseconds}`)
   next()

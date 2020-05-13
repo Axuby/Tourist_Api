@@ -11,7 +11,6 @@ const sendEmail = async options => { //options = subject line,content
 pass:process.env.EMAIL_PASSWORD
     }
   })
-}
 //email options
 const mailOptions = {
   from:'azubuinesamuel@gmail.com',
@@ -22,5 +21,5 @@ const mailOptions = {
 }
 
   await transporter.sendMail(mailOptions);
-
+}
   module.exports = sendEmail;

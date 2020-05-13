@@ -20,67 +20,37 @@ createdAt:{
   //select:false
 },
 // guides:Array,
-guides:[
+User:[
   {
     type:mongoose.Schema.ObjectId,
-    ref:'User'
+    ref:'User',
+    required:[true,'Review must come from a User']
   },
 ],
 tourInfo:[{
 
         type:mongoose.Schema.ObjectId,
-        ref:'Tour'
+        ref:'Tour',
+        required:[true,'Review must belong to a tour.']
 
 }],
-summary:{
-  type:String,
-  trim:true,
-  required:[true,'A tour must have a summary ']
-  //not on the website 
-},
-
 },{
-  toJSON:{ virtuals:true},
-  toObject:{virtuals:true}
-});
-//Virtual properties - can be derived  from one another thus not necessary to store in Db
-
-tourSchema.virtual('durationWeeks').get(function(){
-  return this.Duration/7
-});
-
-//b4 .save() and .create() but not insertMany()
-tourSchema.pre('save',function(next){ //this is pointing to the currently saved Doc
-  this.slug = slugify(this.name, {lower:true})
-  next()
-})
-// tourSchema.pre('save ',async function (next) {
-//  const guidesPromises =  this.guides.map(async (id)=> await User.findById(id))
-//  this.guides = await Promise.all(guidesPromises)
-// })
-
-tourSchema.pre(/^find/,function(next){
-  this.find({secretTour:{ $ne:true}})
-  this.start = Date.now()
-  next()
-})
-
-tourSchema.pre(/^find/,function (next) {
-  this.populate({path:'guides',
-  select:'-_v -passwordChangedAt'
+    toJSON:{ virtuals:true},
+    toObject:{virtuals:true}
   });
-})
-tourSchema.post(/^find/,function(docs,next){
-  console.log(`QUery took ${Date.now()- this.start}  milliseconds}`)
-  next()
-})
 
-tourSchema.pre('aggregate',function(next){
-  this.pipeline().unshift({$match:{secretTour:{$ne:true}}})
-  console.log(this.pipeline())
-  next()
-})
+  reviewSchema.pre(/^find/,function (next) {
+    this.populate({path:'tourInfo',
+    select:'-_v -passwordChangedAt'
+    });
+    this.populate({path:'User',
+    select:'-_v -passwordChangedAt'
+    });
+    next()
+  })
+
+  
+const Review = mongoose.model('Review',reviewSchema);
 
 
-const Review = mongoose.model('Review',reviewSchema)
-module.exports = Review
+module.exports = Review;

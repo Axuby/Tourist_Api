@@ -3,6 +3,7 @@ const tourController = require("./../controller/tourController");
 const express = require('express')
 const router = express.Router();
 const authController = require('../controller/AuthController')
+const reviewCtrler = require('../controller/reviewController') 
 //tours route handlers
 router.param('id',tourController.checkId)
 
@@ -21,6 +22,7 @@ router
   .get(tourController.getTour)
   .delete(authController.restrictAccess('admin','lead-guide'),tourController.deleteTour);
 
-//routes for users
+//routes for review
+router.route('/:tourId/review').post(authController.protect,authController.restrictAccess('users'),reviewCtrler.createReview)
 
 module.exports = router;

@@ -26,9 +26,11 @@ if ((process.env.NODE_ENV = "development")) {
 //Data Sanitization for NoSQL query Injection
 app.use(mongoSanitize())
 //Data Sanitization for XSS(prevent malicious html code in javascript)
-app.use(xss())
+app.use(xss)
 //removes duplicate field.HTTP Parameter Pollution
-app.use(hpp({whitelist:['duration','difficulty','maxGroupSize']}))
+app.use(hpp({
+  whitelist:['duration','difficulty','maxGroupSize']
+}))
 
 const limiter = rateLimit({
   max:100,//100 requests from 1 IP
@@ -57,7 +59,7 @@ app.use((req, res, next) => {
   console.log('Requested At:',req.requestTime);
   next();
 });
-app.use(route)
+
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use('/api/vi/reviews',reviewRouter)
