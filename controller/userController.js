@@ -34,6 +34,10 @@ res.status(200).json({
 next()
 })
 
+exports.getMe = (req,res,next) =>{
+     req.params.id = req.user.id;
+     next()
+}
 
 exports.deleteMyself = catchAsync(async (req,res,next)=>{
 await User.findByIdAndUpdate(req.user.id,{active:false})
@@ -47,37 +51,37 @@ res.status(204).json({
 
 
 
-exports.createUser = catchAsync(async(req, res, next) => {
-    const user = new User(req.body);
-    user.save()
-        .then(() => {
-            res.status(201).json({
-                message: "Post saved successfully!"
-            });
-        })
-        .catch(error => {
-            res.status(400).json({
-                error: error
-            });
-        });
-        next()
-})
+// exports.createUser = catchAsync(async(req, res, next) => {
+//     const user = new User(req.body);
+//     user.save()
+//         .then(() => {
+//             res.status(201).json({
+//                 message: "Post saved successfully!"
+//             });
+//         })
+//         .catch(error => {
+//             res.status(400).json({
+//                 error: error
+//             });
+//         });
+//         next()
+// })
 
 
-exports.getAllUsers = catchAsync( async(req, res, next) => {
-    User.find()
-        .then(things => {
-            res.status(200).json(user);
-        })
-        .catch(error => {
-            res.status(400).json({
-                error: error
-            });
-        });
-        next()
-});
+// exports.getAllUsers = catchAsync( async(req, res, next) => {
+//     User.find()
+//         .then(things => {
+//             res.status(200).json(user);
+//         })
+//         .catch(error => {
+//             res.status(400).json({
+//                 error: error
+//             });
+//         });
+//         next()
+// });
 
-exports.getAllUsers = factory.getAll(User)
+exports.getAllUsers =()=>  factory.getAll(User);
 exports.getOneUser = factory.getOne(User)
 exports.updateUser =  factory.updateOne(User)//admins only
 exports.deleteUser = factory.deleteOne(User)

@@ -6,22 +6,27 @@ const router = express.Router();
 //users handlers
 router.post('/signup', authController.signUp)
 router.post('/login',authController.login);
-
-
 router.post('/forgot-password', authController.forgotPassword)
 router.patch('/reset-password/:token', authController.resetPassword)
-router.patch('/reset-my-password',authController.protect,authController.updateLoggedInUserPassword)
-router.patch('/update-myself',()=>{authController.protect,userController.updateMyself})
-router.delete('/delete-myself', ()=> { authController.protect,userController.deleteMyself})
 
+
+router.use(authController.protect)//protects all routes after it
+router.patch('/update-my-password',authController.updateLoggedInUserPassword)
+router.get('/me',userController.getMe,userController.getOneUser)
+router.patch('/update-myself',()=>{userController.updateMyself})
+router.delete('/delete-myself', ()=> { userController.deleteMyself})
+
+
+router.use(authController.restrictAccess('admin'))
 router
   .route("/")
-  .get(authController.protect,() => userController.getAllUsers)
-  .post(authController.protect,()=> userController.createUser);
+  .get(userController.getAllUsers)
+  .post(()=> userController.createUser);
+
 router
   .route("/:id")
   .get(userController.getOneUser)
-  .patch(authController.protect,authController.restrictAccess('admin'),userController.updateUser)
+  .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
 

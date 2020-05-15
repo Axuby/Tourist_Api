@@ -2,6 +2,8 @@ const fs = require('fs');
 const mongoose = require("mongoose");
 const URL = "mongodb://127.0.0.1:27017/natours-test";
 const Tour = require('../model/tourModel')
+const User = require('../model/userMode;l')
+const Review = require('../model/reviewModel')
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
@@ -21,11 +23,15 @@ mongoose
 
 
   const tourData = JSON.parse(fs.readFileSync(`${__dirname}/simple.json`,'utf-8'))
+  const userData = JSON.parse(fs.readFileSync(`${__dirname}/user.json`,'utf-8'))
+  const reviewData = JSON.parse(fs.readFileSync(`${__dirname}/review.json`,'utf-8'))
 
   const importData = async () =>{
      try {
     
-        await Tour.create(tourData)
+        await Tour.create(tourData,{validateBeforeSave: false})
+        await User.create(userData,{validateBeforeSave: false})
+        await Review.create(reviewData,{validateBeforeSave: false})
         console.log('Successfully Created',tourData)
      } catch (error) {
          console.log(error)
