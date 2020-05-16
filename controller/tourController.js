@@ -126,7 +126,7 @@ exports.getToursWithin = catchAsync(async(req,res,next) => {
 const {distance,latlng,unit} = req.params;
 const [lat,lng] = latlng.split(',')
 
-const radius = unit === 'mi?' distance / 3963.2 :distance/6378.1;
+const radius = unit === 'mi'? distance / 3963.2 : distance/6378.1;
 
 if (!lat || !lng) {
   next(new AppError('Please provide latitude and longitude in the format lat,lng', 400))
@@ -164,6 +164,12 @@ exports.getDistance =catchAsync( async (req,res,next) =>{
         },
         distanceField:'distance'
       }
+    },
+    {
+     $project:{
+       distance:1,
+       name : 1
+     }
     }
   ])
 
