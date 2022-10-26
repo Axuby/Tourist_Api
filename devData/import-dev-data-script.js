@@ -1,6 +1,6 @@
 const fs = require('fs');
 const mongoose = require("mongoose");
-const URL = "mongodb://127.0.0.1:27017/natours-test";
+const URL = "mongodb://127.0.0.1:27017/Tourist";
 const Tour = require('../model/tourModel')
 const User = require('../model/userMode;l')
 const Review = require('../model/reviewModel')
@@ -10,8 +10,8 @@ dotenv.config({ path: "./config.env" });
 mongoose
   .connect(URL, {
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
+    // useCreateIndex: true,
+    // useFindAndModify: false,
     useUnifiedTopology: true
   })
   .then(() => {
@@ -22,16 +22,16 @@ mongoose
   });
 
 
-  const tourData = JSON.parse(fs.readFileSync(`${__dirname}/simple.json`,'utf-8'))
-  const userData = JSON.parse(fs.readFileSync(`${__dirname}/user.json`,'utf-8'))
-  const reviewData = JSON.parse(fs.readFileSync(`${__dirname}/review.json`,'utf-8'))
+  const tourData = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`,'utf-8'))
+  // const userData = JSON.parse(fs.readFileSync(`${__dirname}/user.json`,'utf-8'))
+  // const reviewData = JSON.parse(fs.readFileSync(`${__dirname}/review.json`,'utf-8'))
 
   const importData = async () =>{
      try {
-    
+
         await Tour.create(tourData,{validateBeforeSave: false})
-        await User.create(userData,{validateBeforeSave: false})
-        await Review.create(reviewData,{validateBeforeSave: false})
+        // await User.create(userData,{validateBeforeSave: false})
+        // await Review.create(reviewData,{validateBeforeSave: false})
         console.log('Successfully Created',tourData)
      } catch (error) {
          console.log(error)
@@ -42,7 +42,7 @@ mongoose
 
   const deleteData = async () =>{
     try {
-     
+
        await Tour.deleteMany()
        console.log('Successfully deleted',tourData)
     } catch (error) {
@@ -80,7 +80,7 @@ if (process.argv[2]=== '--import') {
 
 // //limit the fields
 // if (req.query.fields) {
-//   const fields = req.query.fields.split(',').join(' ')//mProjecting = process of selecting fieldnames by mongoose requests for string with field names separated by spaces 
+//   const fields = req.query.fields.split(',').join(' ')//mProjecting = process of selecting fieldnames by mongoose requests for string with field names separated by spaces
 // query = query.select(fields) //eg select('name duration price)
 
 // } else {

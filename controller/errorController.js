@@ -1,7 +1,7 @@
 const AppError = require("../utils/appError")
 
 const handleCastErrorDB = err => {
-  const message = `Invalid ${err.path}: ${err.value}`
+  const message = `Invalid ${err.path}: ${err.value}` //path and value are fields in the error object
   return new AppError(message,400)
 }
 
@@ -34,7 +34,7 @@ const handleDuplicateFieldsDB =  (err) => {
     }
   }
 
-  const sendErrorDev = (err,res)=>{
+const sendErrorDev = (err,res)=>{
     res.status(err.statusCode).json({
       status:err.status,
       message:err.message,
@@ -63,16 +63,16 @@ const handleDuplicateFieldsDB =  (err) => {
           console.error('Error',err);
 
           //error handling for mongoose using the name key of err
-                let error = {...err};
-                if (error.name === 'CastError')   error = handleCastErrorDB(error)
-                //from postman
-                if (error.code === 11000)    error = handleDuplicateFieldsDB(error) 
-                if (error.name === 'ValidationError')   error = handleValidationErrorDB(error)
-                // Handle jwt error
-                if (error.name === 'jsonWebTokenError') error = handleJwtError()
+        let error = {...err};
+        if (error.name === 'CastError')   error = handleCastErrorDB(error);
+        //from postman
+        if (error.code === 11000)    error = handleDuplicateFieldsDB(error) 
+        if (error.name === 'ValidationError')   error = handleValidationErrorDB(error)
+        // Handle jwt error
+        if (error.name === 'jsonWebTokenError') error = handleJwtError()
         if (error.name === 'TokenExpiredError') error = handleExpiredTokenError()
-        sendErrorProd(err,res)
+        sendErrorProd(error,res)
         }
-        
-  next(new AppError(`the ${req.originalUrl} could not be found on this server `,404));
+  
+    next(new AppError(`the ${req.originalUrl} could not be found on this server `,404));
 } 

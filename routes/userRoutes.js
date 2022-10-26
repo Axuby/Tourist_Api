@@ -16,7 +16,8 @@ router.patch('/reset-password/:token', authController.resetPassword)
 router.use(authController.protect)//protects all routes after it
 router.patch('/update-my-password',authController.updateLoggedInUserPassword)
 router.get('/me',userController.getMe,userController.getOneUser)
-router.patch('/update-myself',upload.single('photo'),()=>{userController.updateMyself})
+router.patch('/update-myself',userController.UserUploadPhoto,()=>{ userController.updateMyself})
+// router.patch('/update-myself',upload.single('photo'),()=>{userController.updateMyself})
 router.delete('/delete-myself', ()=> { userController.deleteMyself})
 
 

@@ -12,5 +12,5 @@ res.status(200).render('overview',{
 
 
 exports.getTours = catchAsync(async(req,res,next)=>{
-    const tour 
+ 
 })

@@ -8,16 +8,16 @@ const sendEmail = async options => { //options = subject line,content
     port:process.env.EMAIL_PORT,
     auth:{
       user:process.env.EMAIL_USERNAME,
-pass:process.env.EMAIL_PASSWORD
+      pass:process.env.EMAIL_PASSWORD
     }
   })
 //email options
 const mailOptions = {
-  from:'azubuinesamuel@gmail.com',
+  from:' Azubuine Samuel  azubuinesamuel@gmail.com',
   to:options.email,
   subject:options.subject,
   text:options.message
-  //html
+  //html:
 }
 
   await transporter.sendMail(mailOptions);

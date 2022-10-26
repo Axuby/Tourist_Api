@@ -6,8 +6,13 @@ const authController = require('../controller/AuthController')
 const reviewCtrler = require('../controller/reviewController') 
 const reviewRouter  = require('../routes/reviewRoutes')
 //tours route handlers
-router.param('id',tourController.checkId)
+// router.param('id',tourController.checkId)
+// router.param(':body',tourController.checkBodyy)
 
+
+
+//ALias for popular searching(5 'best and cheapest' Tours)
+  //limit=5&sort=-ratingsAverage,price (rating in descending)
 router.route('/top-5-tours')
 .get(()=> tourController.aliasTopTours,tourController.getAllTours)
 

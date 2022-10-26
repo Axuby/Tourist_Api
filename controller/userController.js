@@ -3,8 +3,16 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError')
 const factory = require('../controller/handleFactory')
 const multer = require('multer')
-
-//const multerStorag = multer.diskStorage()
+const upload = multer({dest:"public/img/users"})
+const multerStorag = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/img/users");
+    },
+    filename: (req, file, cb) => {
+        const ext = file.mimetype.split('/')[1]
+    }
+})
+exports.UserUploadPhoto = upload.single('photo')
 const filterObj = (obj,...allowedFields)=>{
     const newObj = {}
     Object.keys(obj).forEach((el)=> {
@@ -13,6 +21,7 @@ const filterObj = (obj,...allowedFields)=>{
      return newObj;
 }
 
+
 exports.updateMyself = catchAsync(async(req,res,next)=>{
 if (req.body.password || req.body.confirmPassword) {
     return next(new AppError('This route is not for password update!',400))
@@ -20,7 +29,8 @@ if (req.body.password || req.body.confirmPassword) {
 //filtered out unwanted updates
 const filteredBody = filterObj(req.body,'name','email')
 
-const updatedUser = await User.findByIdAndUpdate(req.user.id,filteredBody, {
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody,
+        {
     new:true,
     runValidators:true
 })
